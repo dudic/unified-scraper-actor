@@ -58,15 +58,24 @@ export async function handleProfilingValues({ page, crawler, log }) {
     
     await page.locator("#report_box").waitFor({ state: "visible", timeout: 60000 });
     
-    const buttons = await page.locator("#report_box button[onclick*=reportbox_submit]").all();
-    log.info(`Found ${buttons.length} report buttons`);
+    // Get initial count of buttons to calculate total steps
+    const initialButtons = await page.locator("#report_box button[onclick*=reportbox_submit]").all();
+    const buttonCount = initialButtons.length;
+    log.info(`Found ${buttonCount} report buttons`);
     
-    // Update total steps based on actual buttons found
-    totalSteps = 4 + buttons.length;
+    // Update total steps based on button count
+    totalSteps = 4 + buttonCount;
     
     // STEP 5: Download each report
-    for (let i = 0; i < buttons.length; i++) {
+    for (let i = 0; i < buttonCount; i++) {
       currentStep++;
+      
+      // Re-query buttons each time to get fresh references
+      const buttons = await page.locator("#report_box button[onclick*=reportbox_submit]").all();
+      if (buttons.length !== buttonCount) {
+        throw new Error(`Button count changed during iteration. Expected ${buttonCount}, found ${buttons.length}`);
+      }
+      
       const button = buttons[i];
       const buttonText = await button.textContent();
       
