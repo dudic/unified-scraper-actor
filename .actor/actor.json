@@ -9,11 +9,6 @@
       "actorSpecification": 1,
       "title": "Scraped Data",
       "description": "Dataset containing scraped reports and data"
-    },
-    "keyValueStore": {
-      "actorKeyValueStoreSchemaVersion": 1,
-      "title": "Downloaded Files",
-      "description": "Key-value store containing downloaded files (PDFs, CSVs, etc.)"
     }
   },
   "input": {
