@@ -4,13 +4,7 @@
   "title": "Unified Scraper Actor",
   "description": "A unified Apify actor that merges functionality from four separate scraping actors. Supports HR Cockpit and Profiling Values platforms with real-time progress tracking.",
   "version": "1.0.0",
-  "storages": {
-    "dataset": {
-      "actorSpecification": 1,
-      "title": "Scraped Data",
-      "description": "Dataset containing scraped reports and data"
-    }
-  },
+
   "input": {
     "title": "Input",
     "type": "object",
