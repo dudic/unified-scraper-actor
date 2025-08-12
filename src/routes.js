@@ -3,7 +3,7 @@
  * Dispatches requests to appropriate handlers based on code type
  */
 
-import { createPlaywrightRouter } from "crawlee";
+import { createPlaywrightRouter, Dataset } from "crawlee";
 import { handleHRCockpit } from "./handlers/hrCockpitHandler.js";
 import { handleProfilingValues } from "./handlers/profilingValuesHandler.js";
 import { handleProfilingValuesSoll } from "./handlers/profilingValuesSollHandler.js";
@@ -69,7 +69,7 @@ router.addHandler("detail", async ({ request, page, log }) => {
   const title = await page.title();
   log.info(`Detail page: ${title}`, { url: request.loadedUrl });
 
-  await Actor.pushData({
+  await Dataset.pushData({
     url: request.loadedUrl,
     title,
   });

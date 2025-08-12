@@ -62,21 +62,22 @@ try {
     });
   }
   
-  // Set up crawler with configuration
+  // Create proxy configuration (matches legacy actors)
+  const proxyConfiguration = await Actor.createProxyConfiguration();
+  
+  // Set up crawler with configuration (matches legacy actors)
   const crawler = new PlaywrightCrawler({
-    // Common configuration
+    proxyConfiguration,
     requestHandlerTimeoutSecs: 600,
     maxRequestRetries: 3,
     requestHandler: router,
-    headless: true, // Better performance in production
+    headless: false, // Match legacy actors (headless: false)
     
-    // Launch options
+    // Launch options (simplified to match legacy)
     launchContext: {
       launchOptions: {
         args: [
-          "--disable-gpu",
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
+          "--disable-gpu", // Mitigates the "crashing GPU process" issue in Docker containers
         ],
       },
     },
