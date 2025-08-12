@@ -12,7 +12,7 @@ import { logWithContext } from "./utils/loggingUtils.js";
 export const router = createPlaywrightRouter();
 
 router.addDefaultHandler(async ({ page, crawler, log }) => {
-  const { code, codeType, config, runId } = crawler;
+  const { code, codeType, runId, actorConfig: config } = crawler;
   
   log.info(`Starting unified scraper process`);
   log.info(`Code: ${code}`);

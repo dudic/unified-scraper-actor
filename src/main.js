@@ -108,11 +108,13 @@ try {
     },
   });
   
-  // Attach configuration and context to crawler
+  // Attach context to crawler (avoid config object to prevent type errors)
   crawler.code = code;
   crawler.codeType = codeType;
-  crawler.config = config;
   crawler.runId = runId;
+  
+  // Store config separately for handlers to access
+  crawler.actorConfig = config;
   
   // Set start URLs based on configuration
   const startUrls = [config.baseUrl];

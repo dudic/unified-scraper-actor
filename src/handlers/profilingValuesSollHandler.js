@@ -10,7 +10,7 @@ import { sendProgressUpdate } from "../utils/progressUtils.js";
 import { logStep, logError, logSuccess } from "../utils/loggingUtils.js";
 
 export async function handleProfilingValuesSoll({ page, crawler, log }) {
-  const { code, codeType, config, runId } = crawler;
+  const { code, codeType, runId, actorConfig: config } = crawler;
   
   log.info(`Starting Profiling Values Soll handler for ${config.name}`);
   

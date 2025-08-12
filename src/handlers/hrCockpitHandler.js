@@ -10,7 +10,7 @@ import { sendProgressUpdate } from "../utils/progressUtils.js";
 import { logStep, logDownload, logError, logSuccess } from "../utils/loggingUtils.js";
 
 export async function handleHRCockpit({ page, crawler, log }) {
-  const { code, codeType, config, runId } = crawler;
+  const { code, codeType, runId, actorConfig: config } = crawler;
   
   log.info(`Starting HR Cockpit handler for ${config.name}`);
   
