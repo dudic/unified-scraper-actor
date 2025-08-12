@@ -88,8 +88,9 @@ export async function handleHRCockpit({ page, crawler, log }) {
       log.info(`Available link texts: ${allLinks.slice(0, 10).join(', ')}...`);
     }
     
-    // Update total steps based on actual files found: 4 base steps + download steps + CSV step + save step
-    totalSteps = 4 + locators.length + (config.includeCSV ? 1 : 0) + 1; // +1 for save results step
+    // Update total steps based on actual files found: 5 base steps + download steps + CSV step + save step
+    // Base steps: Login(1) + Navigate Admin(2) + Navigate Skills(3) + Navigate Tests(4) + Find Links(5)
+    totalSteps = 5 + locators.length + (config.includeCSV ? 1 : 0) + 1; // +1 for save results step
     
     // STEP 6: Download standard reports
     if (locators.length > 0) {
