@@ -88,8 +88,8 @@ export async function handleHRCockpit({ page, crawler, log }) {
       log.info(`Available link texts: ${allLinks.slice(0, 10).join(', ')}...`);
     }
     
-    // Update total steps based on actual files found
-    totalSteps = 4 + locators.length + (config.includeCSV ? 1 : 0);
+    // Update total steps based on actual files found: 4 base steps + download steps + CSV step + save step
+    totalSteps = 4 + locators.length + (config.includeCSV ? 1 : 0) + 1; // +1 for save results step
     
     // STEP 6: Download standard reports
     if (locators.length > 0) {
@@ -107,14 +107,19 @@ export async function handleHRCockpit({ page, crawler, log }) {
             url: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${downloadResult.fileName}`
           });
           
-          // Send progress update
+          // Send progress update (non-blocking)
           if (runId) {
-            await sendProgressUpdate({
-              runId,
-              done: currentStep,
-              total: totalSteps,
-              log
-            });
+            try {
+              await sendProgressUpdate({
+                runId,
+                done: currentStep,
+                total: totalSteps,
+                log
+              });
+            } catch (progressError) {
+              // Don't fail the main process due to progress update errors
+              log.info(`Progress update failed (non-critical): ${progressError.message}`);
+            }
           }
           
         } catch (error) {
@@ -136,14 +141,19 @@ export async function handleHRCockpit({ page, crawler, log }) {
           url: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${csvResult.fileName}`
         });
         
-        // Send progress update
+        // Send progress update (non-blocking)
         if (runId) {
-          await sendProgressUpdate({
-            runId,
-            done: currentStep,
-            total: totalSteps,
-            log
-          });
+          try {
+            await sendProgressUpdate({
+              runId,
+              done: currentStep,
+              total: totalSteps,
+              log
+            });
+          } catch (progressError) {
+            // Don't fail the main process due to progress update errors
+            log.info(`Progress update failed (non-critical): ${progressError.message}`);
+          }
         }
         
       } catch (error) {
@@ -158,15 +168,20 @@ export async function handleHRCockpit({ page, crawler, log }) {
     
     await Dataset.pushData(result);
     
-    // Send final progress update
+    // Send final progress update (non-blocking)
     if (runId) {
-      await sendProgressUpdate({
-        runId,
-        done: totalSteps,
-        total: totalSteps,
-        status: 'COMPLETED',
-        log
-      });
+      try {
+        await sendProgressUpdate({
+          runId,
+          done: totalSteps,
+          total: totalSteps,
+          status: 'COMPLETED',
+          log
+        });
+      } catch (progressError) {
+        // Don't fail the main process due to progress update errors
+        log.info(`Final progress update failed (non-critical): ${progressError.message}`);
+      }
     }
     
     logSuccess({ 

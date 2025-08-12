@@ -18,7 +18,16 @@ export async function sendProgressUpdate({ runId, done, total, status = 'RUNNING
   const actorSecret = process.env.ACTOR_SECRET;
   
   if (!frontUrl || !actorSecret) {
-    log.warn('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping progress update.');
+    // Use a robust logging approach that handles different logger implementations
+    if (log && typeof log.warn === 'function') {
+      log.warn('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping progress update.');
+    } else if (log && typeof log.warning === 'function') {
+      log.warning('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping progress update.');
+    } else if (log && typeof log.info === 'function') {
+      log.info('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping progress update.');
+    } else {
+      console.log('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping progress update.');
+    }
     return;
   }
   
@@ -78,7 +87,16 @@ export async function sendErrorUpdate({ runId, error, log }) {
   const actorSecret = process.env.ACTOR_SECRET;
   
   if (!frontUrl || !actorSecret) {
-    log.warn('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping error update.');
+    // Use a robust logging approach that handles different logger implementations
+    if (log && typeof log.warn === 'function') {
+      log.warn('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping error update.');
+    } else if (log && typeof log.warning === 'function') {
+      log.warning('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping error update.');
+    } else if (log && typeof log.info === 'function') {
+      log.info('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping error update.');
+    } else {
+      console.log('Missing FRONT_URL or ACTOR_SECRET environment variables. Skipping error update.');
+    }
     return;
   }
   
