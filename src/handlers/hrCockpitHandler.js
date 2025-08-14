@@ -102,9 +102,19 @@ export async function handleHRCockpit({ page, crawler, log }) {
         
         try {
           const downloadResult = await downloadWithRetry(page, locator, fileType, log);
+          
+          // Store file in Key-Value Store
+          const buffer = await fs.readFile(downloadResult.fileName);
+          await KeyValueStore.setValue(downloadResult.fileName, buffer, { 
+            contentType: downloadResult.contentType 
+          });
+          
+          // Add file metadata to result for dataset
           result.reports.push({
-            name: fileType,
-            url: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${downloadResult.fileName}`
+            fileUrl: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${downloadResult.fileName}`,
+            fileName: downloadResult.fileName,
+            contentType: downloadResult.contentType,
+            fileSize: buffer.length
           });
           
           // Send progress update (non-blocking)
@@ -136,9 +146,19 @@ export async function handleHRCockpit({ page, crawler, log }) {
       
       try {
         const csvResult = await downloadCSVWithRetry(page, code, log);
+        
+        // Store file in Key-Value Store
+        const buffer = await fs.readFile(csvResult.fileName);
+        await KeyValueStore.setValue(csvResult.fileName, buffer, { 
+          contentType: csvResult.contentType 
+        });
+        
+        // Add file metadata to result for dataset
         result.reports.push({
-          name: 'Evaluate-daten',
-          url: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${csvResult.fileName}`
+          fileUrl: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${csvResult.fileName}`,
+          fileName: csvResult.fileName,
+          contentType: csvResult.contentType,
+          fileSize: buffer.length
         });
         
         // Send progress update (non-blocking)
@@ -190,7 +210,7 @@ export async function handleHRCockpit({ page, crawler, log }) {
         code, 
         codeType, 
         reportsCount: result.reports.length,
-        reports: result.reports.map(r => r.name)
+        reports: result.reports.map(r => r.fileName)
       }, 
       log 
     });
@@ -221,9 +241,6 @@ async function downloadWithRetry(page, locator, fileType, log, maxRetries = 3) {
       const contentType = fileName.endsWith("pdf")
         ? "application/pdf"
         : "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-      
-      const buffer = await fs.readFile(fileName);
-      await KeyValueStore.setValue(fileName, buffer, { contentType });
       
       return { fileName, contentType };
       
@@ -282,8 +299,6 @@ async function downloadCSVWithRetry(page, code, log, maxRetries = 3) {
       log.info(`Successfully downloaded CSV: ${fileName}`);
       
       const contentType = 'text/csv';
-      const buffer = await fs.readFile(fileName);
-      await KeyValueStore.setValue(fileName, buffer, { contentType });
       
       return { fileName, contentType };
       

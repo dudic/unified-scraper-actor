@@ -90,7 +90,14 @@ export async function handleProfilingValues({ page, crawler, log }) {
           },
         });
         
-        result.reports.push(reportResult);
+        // Store file in Key-Value Store (already done in downloadAndUpload)
+        // Add file metadata to result for dataset
+        result.reports.push({
+          fileUrl: reportResult.url,
+          fileName: reportResult.name,
+          contentType: reportResult.contentType || 'application/pdf',
+          fileSize: reportResult.fileSize
+        });
         log.info(`Successfully processed: ${reportResult.name}`);
         
         // Send progress update
@@ -132,7 +139,7 @@ export async function handleProfilingValues({ page, crawler, log }) {
         code, 
         codeType, 
         reportsCount: result.reports.length,
-        reports: result.reports.map(r => r.name)
+        reports: result.reports.map(r => r.fileName)
       }, 
       log 
     });
@@ -174,6 +181,8 @@ async function downloadAndUpload(button, page, log) {
     return {
       name,
       url: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${name}`,
+      contentType: "application/json",
+      fileSize: jsonData.length
     };
   }
   
@@ -212,5 +221,7 @@ async function downloadAndUpload(button, page, log) {
   return {
     name,
     url: `https://api.apify.com/v2/key-value-stores/${process.env.ACTOR_DEFAULT_KEY_VALUE_STORE_ID}/records/${name}`,
+    contentType,
+    fileSize: buffer.length
   };
 }
