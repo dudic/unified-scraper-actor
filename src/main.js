@@ -161,7 +161,6 @@ try {
   console.error(`Actor failed: ${error.message}`);
   
   // Send error update to web UI
-  // FIXED: Use the original runId (Supabase UUID) instead of shadowing it
   if (runId) {
     await sendErrorUpdate({
       runId,
@@ -174,7 +173,7 @@ try {
   await Actor.pushData({
     error: error.message,
     stack: error.stack,
-    runId: runId // Use the original runId (Supabase UUID)
+    runId: runId
   });
   
   // Exit with error
