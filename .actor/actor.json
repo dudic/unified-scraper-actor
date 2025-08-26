@@ -1,0 +1,76 @@
+{
+  "actorSpecification": 1,
+  "name": "unified-scraper-actor",
+  "title": "Unified Scraper Actor",
+  "description": "A unified Apify actor that merges functionality from four separate scraping actors. Supports HR Cockpit and Profiling Values platforms with real-time progress tracking.",
+
+  "version": "1.3",
+
+  "input": {
+    "title": "Input",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+      "code": {
+        "title": "Code",
+        "type": "string",
+        "description": "The code to search for in the target system",
+        "editor": "textfield"
+      },
+      "codeType": {
+        "title": "Code Type",
+        "type": "string",
+        "description": "The type of scraping to perform",
+        "enum": [
+          "HR_COCKPIT",
+          "HR_COCKPIT_SOLL", 
+          "PROFILING_VALUES",
+          "PROFILING_VALUES_SOLL"
+        ],
+        "enumTitles": [
+          "HR Cockpit - Standard",
+          "HR Cockpit - Soll Profile",
+          "Profiling Values - Reports",
+          "Profiling Values - PAT Data"
+        ],
+        "editor": "select"
+      }
+    },
+    "required": ["code", "codeType"]
+  },
+  "secrets": {
+    "HR_COCKPIT_USER": {
+      "title": "HR Cockpit Username",
+      "type": "string",
+      "description": "Username for HR Cockpit system"
+    },
+    "HR_COCKPIT_PASSWORD": {
+      "title": "HR Cockpit Password", 
+      "type": "string",
+      "description": "Password for HR Cockpit system",
+      "isSecret": true
+    },
+    "PROFILING_VALUES_USER": {
+      "title": "Profiling Values Username",
+      "type": "string", 
+      "description": "Username for Profiling Values system"
+    },
+    "PROFILING_VALUES_PASSWORD": {
+      "title": "Profiling Values Password",
+      "type": "string",
+      "description": "Password for Profiling Values system", 
+      "isSecret": true
+    },
+    "FRONT_URL": {
+      "title": "Web UI URL",
+      "type": "string",
+      "description": "URL of the web UI for progress updates (e.g., https://your-app.vercel.app)"
+    },
+    "ACTOR_SECRET": {
+      "title": "Actor Secret",
+      "type": "string", 
+      "description": "Shared secret for authenticating with the web UI",
+      "isSecret": true
+    }
+  }
+}
